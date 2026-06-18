@@ -1,0 +1,59 @@
+; UHDARC HBlink3 DMR Master Server Configuration
+; Utah High Desert Amateur Radio Club
+; KF7KGN
+;
+; This is a sanitized example config.
+; Passwords and public IPs have been removed.
+
+[GLOBAL]
+PATH: /opt/hblink3/
+PING_TIME: 5
+MAX_MISSED: 3
+USE_ACL: True
+REG_ACL: PERMIT:ALL
+SUB_ACL: DENY:1
+TGID_TS1_ACL: PERMIT:ALL
+TGID_TS2_ACL: PERMIT:ALL
+
+[REPORTS]
+REPORT: True
+REPORT_INTERVAL: 60
+REPORT_PORT: 4322
+REPORT_CLIENTS: 127.0.0.1
+
+[LOGGER]
+LOG_FILE: /var/log/hblink/hblink.log
+LOG_HANDLERS: file-timed
+LOG_LEVEL: INFO
+LOG_NAME: HBlink-UHDARC
+
+[ALIASES]
+TRY_DOWNLOAD: True
+PATH: /opt/hblink3/
+PEER_FILE: peer_ids.json
+SUBSCRIBER_FILE: subscriber_ids.json
+TGID_FILE: talkgroup_ids.json
+PEER_URL: https://www.radioid.net/static/rptrs.json
+SUBSCRIBER_URL: https://www.radioid.net/static/users.json
+STALE_DAYS: 7
+
+; ============================================================
+; UHDARC DMR MASTER SERVER
+; Listens on port 62030 for incoming DMR peer connections
+; Supports up to 20 simultaneous peers
+; ============================================================
+[UHDARC-MASTER]
+MODE: MASTER
+ENABLED: True
+REPEAT: True
+MAX_PEERS: 20
+EXPORT_AMBE: False
+IP:
+PORT: 62030
+PASSPHRASE: [REDACTED-USE-ENV-VAR]
+GROUP_HANGTIME: 5
+USE_ACL: True
+REG_ACL: PERMIT:ALL
+SUB_ACL: DENY:1
+TGID_TS1_ACL: PERMIT:ALL
+TGID_TS2_ACL: PERMIT:ALL

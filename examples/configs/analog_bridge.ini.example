@@ -1,0 +1,57 @@
+; UHDARC Analog Bridge Configuration
+; Utah High Desert Amateur Radio Club
+; KF7KGN
+;
+; This is a sanitized example config.
+; Handles FM analog to DMR digital transcoding.
+; Three instances run simultaneously:
+;   - Analog_Bridge.ini       (DMR)
+;   - Analog_Bridge_P25.ini   (P25)
+;   - Analog_Bridge_YSF.ini   (YSF)
+
+[GENERAL]
+logLevel = 2
+exportMetadata = true
+transferRootDir = /tmp
+subscriberFile = /var/lib/dvswitch/subscriber_ids.csv
+decoderFallBack = true
+useEmulator = true
+emulatorAddress = 127.0.0.1:2470
+pcmPort = 2222
+
+; ============================================================
+; AMBE AUDIO SECTION
+; Handles compressed digital voice encoding/decoding
+; ambeMode = DMR for this instance
+; P25 instance uses ambeMode = P25
+; YSF instance uses ambeMode = YSFN
+; ============================================================
+[AMBE_AUDIO]
+address = 127.0.0.1
+txPort = 31103
+rxPort = 31100
+ambeMode = DMR
+minTxTimeMS = 500
+gatewayDmrId = [REDACTED]
+repeaterID = [REDACTED]
+txTg = 313040
+txTs = 2
+colorCode = 1
+
+; ============================================================
+; USRP SECTION
+; Connects to Asterisk/AllStar via USRP channel driver
+; Matches rpt.conf setting:
+;   rxchannel = USRP/127.0.0.1:34001:32001
+; txPort must match rxchannel RX port in rpt.conf
+; rxPort must match rxchannel TX port in rpt.conf
+; ============================================================
+[USRP]
+address = 127.0.0.1
+txPort = 32001
+rxPort = 34001
+usrpAudio = AUDIO_USE_GAIN
+usrpGain = 3.80
+usrpAGC = -20,10,100
+tlvAudio = AUDIO_USE_GAIN
+tlvGain = 0.60

@@ -1,0 +1,87 @@
+; UHDARC AllStar Repeater Configuration
+; Utah High Desert Amateur Radio Club
+; KF7KGN
+;
+; This is a sanitized example config.
+; Passwords and public IPs have been removed.
+
+; ============================================================
+; NODE DEFINITIONS
+; ============================================================
+
+; Main hub node — no physical radio attached
+; Acts as the central switching matrix for all digital modes
+[573470](node-main)
+statpost_url = http://stats.allstarlink.org/uhandler
+idrecording = |iKF7KGN
+duplex = 2
+rxchannel = Local/pseudo
+startup_macro = *1999
+eclink = yes
+
+; ============================================================
+; DMR NODE 1999
+; Receives DMR radio signals via USRP interface
+; USRP RX port 34001, TX port 32001
+; ============================================================
+[1999](node-main)
+startup_macro = *3573470
+rxchannel = USRP/127.0.0.1:34001:32001
+rxgain = -3.0
+duplex = 0
+hangtime = 0
+althangtime = 0
+holdofftelem = 1
+telemdefault = 0
+telemdynamic = 0
+nounkeyct = 1
+linktolink = no
+totime = 180000
+idrecording = |iKF7KGN
+idtalkover = |iKF7KGN
+
+; ============================================================
+; P25 NODE 1998
+; Receives P25 radio signals via USRP interface
+; USRP RX port 34002, TX port 32002
+; Higher gain reduction (-6.0) needed for P25 audio levels
+; ============================================================
+[1998](node-main)
+startup_macro = *3573470
+rxchannel = USRP/127.0.0.1:34002:32002
+rxgain = -6.0
+txgain = 0.0
+duplex = 0
+hangtime = 0
+althangtime = 0
+holdofftelem = 1
+telemdefault = 0
+telemdynamic = 0
+nounkeyct = 1
+linktolink = no
+totime = 180000
+idrecording = |iKF7KGN
+idtalkover = |iKF7KGN
+
+; ============================================================
+; YSF NODE 1997
+; Receives System Fusion signals via USRP interface
+; USRP RX port 34003, TX port 32003
+; Flat gain (0.0) — YSF audio needs no adjustment
+; ============================================================
+[1997](node-main)
+startup_macro = *3573470
+rxchannel = USRP/127.0.0.1:34003:32003
+rxgain = 0.0
+txgain = 0.0
+duplex = 0
+hangtime = 0
+althangtime = 0
+holdofftelem = 1
+telemdefault = 0
+telemdynamic = 0
+nounkeyct = 1
+linktolink = no
+totime = 180000
+idrecording = |iKF7KGN
+idtalkover = |iKF7KGN
