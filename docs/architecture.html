@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UHDARC Digital Bridge - Complete Architecture</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #1a1a2e; color: #333; padding: 20px; }
+        .main-container { max-width: 2000px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 40px; padding: 20px; background: #f8f9fa; border-left: 5px solid #667eea; border-radius: 5px; }
+        .section h2 { color: #667eea; margin-bottom: 15px; font-size: 1.8em; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .section h3 { color: #764ba2; margin-top: 15px; margin-bottom: 10px; font-size: 1.2em; }
+        .detail-box { background: white; border: 2px solid #667eea; padding: 15px; margin: 10px 0; border-radius: 5px; line-height: 1.6; }
+        .info { display: flex; gap: 15px; margin: 10px 0; flex-wrap: wrap; }
+        .info-item { flex: 1; background: white; padding: 12px; border-radius: 4px; border: 1px solid #ddd; min-width: 150px; }
+        .info-label { font-weight: bold; color: #667eea; font-size: 0.9em; text-transform: uppercase; }
+        .info-value { font-size: 1.1em; color: #333; margin-top: 5px; font-family: monospace; }
+        .connection-table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; }
+        .connection-table th { background: #667eea; color: white; padding: 12px; text-align: left; }
+        .connection-table td { padding: 12px; border-bottom: 1px solid #ddd; }
+        .connection-table tr:hover { background: #f5f5f5; }
+        .port-tag { display: inline-block; background: #667eea; color: white; padding: 4px 8px; border-radius: 3px; font-size: 0.85em; font-family: monospace; margin: 2px; }
+        .flow-diagram { background: white; border: 2px dashed #667eea; padding: 20px; margin: 15px 0; border-radius: 5px; font-family: monospace; font-size: 0.9em; line-height: 1.8; white-space: pre; overflow-x: auto; }
+        .warning { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin: 15px 0; border-radius: 3px; }
+        .success { background: #d4edda; border-left: 5px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 3px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-box { background: white; border: 2px solid #667eea; padding: 15px; text-align: center; border-radius: 5px; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #667eea; }
+        .stat-label { font-size: 0.9em; color: #555; margin-top: 5px; }
+        .node-box { background: white; border-left: 4px solid; padding: 15px; margin: 10px 0; border-radius: 3px; }
+        .node-dmr { border-left-color: #3498db; }
+        .node-p25 { border-left-color: #9b59b6; }
+        .node-ysf { border-left-color: #1abc9c; }
+        .code-block { background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 0.9em; margin: 10px 0; line-height: 1.4; overflow-x: auto; white-space: pre; }
+        .footer { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; margin-top: 20px; }
+        .redacted { background: #333; color: #333; border-radius: 3px; padding: 0 4px; user-select: none; }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="header">
+        <h1>UHDARC Digital Bridge Architecture</h1>
+        <p>Utah High Desert Amateur Radio Club</p>
+        <p>Multi-Mode Digital Radio Convergence System | AllStar Node 573470 | KF7KGN</p>
+    </div>
+
+    <div class="content">
+
+        <div class="section">
+            <h2>System Overview</h2>
+            <div class="stats">
+                <div class="stat-box"><div class="stat-number">75</div><div class="stat-label">Active Channels</div></div>
+                <div class="stat-box"><div class="stat-number">7</div><div class="stat-label">Active Calls</div></div>
+                <div class="stat-box"><div class="stat-number">4</div><div class="stat-label">Digital Modes</div></div>
+                <div class="stat-box"><div class="stat-number">9</div><div class="stat-label">Bridge Services</div></div>
+                <div class="stat-box"><div class="stat-number">20+</div><div class="stat-label">Remote Peers</div></div>
+                <div class="stat-box"><div class="stat-number">1</div><div class="stat-label">Debian Server</div></div>
+            </div>
+            <div class="detail-box">
+                <strong>What UHDARC built:</strong> A radio convergence hub that acts like a central telephone switchboard for digital radio networks.
+                Four completely incompatible digital radio protocols — DMR, P25, YSF, and EchoLink — are all bridged through a single Asterisk/AllStar node.
+                A person on a DMR radio and a person on a P25 radio on opposite sides of the country can talk to each other in real time through this system.
+                <br><br>
+                <strong>Why this is hard:</strong> DMR, P25, YSF, and EchoLink all use completely different audio compression, signaling, and network protocols.
+                They cannot natively communicate with each other. This system transcodes audio between all four modes simultaneously using AMBE encoding,
+                MMDVM bridging, and Asterisk IAX2 routing — all running in production on a single Debian Linux server.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>The Four Digital Modes</h2>
+            <div class="node-box node-dmr">
+                <h3 style="color:#3498db">DMR — Digital Mobile Radio (Node 1999)</h3>
+                <p>The most widely used digital radio protocol worldwide. Uses TDMA (Time Division Multiple Access) to put two conversations on one frequency simultaneously using two time slots. Connected via HBlink3 master server to DMR networks across the USA.</p>
+                <div class="info">
+                    <div class="info-item"><div class="info-label">Node</div><div class="info-value">1999</div></div>
+                    <div class="info-item"><div class="info-label">USRP RX Port</div><div class="info-value">34001</div></div>
+                    <div class="info-item"><div class="info-label">USRP TX Port</div><div class="info-value">32001</div></div>
+                    <div class="info-item"><div class="info-label">Audio Gain</div><div class="info-value">-3.0 dB</div></div>
+                    <div class="info-item"><div class="info-label">Backend</div><div class="info-value">HBlink3 :62030</div></div>
+                </div>
+            </div>
+            <div class="node-box node-p25">
+                <h3 style="color:#9b59b6">P25 — Project 25 (Node 1998)</h3>
+                <p>The digital radio standard used by public safety agencies — police, fire, EMS, and government. Developed by APCO International. Bridged to all other modes via P25Gateway and the Quantar Bridge on port 1994.</p>
+                <div class="info">
+                    <div class="info-item"><div class="info-label">Node</div><div class="info-value">1998</div></div>
+                    <div class="info-item"><div class="info-label">USRP RX Port</div><div class="info-value">34002</div></div>
+                    <div class="info-item"><div class="info-label">USRP TX Port</div><div class="info-value">32002</div></div>
+                    <div class="info-item"><div class="info-label">Audio Gain</div><div class="info-value">-6.0 dB</div></div>
+                    <div class="info-item"><div class="info-label">Backend</div><div class="info-value">Quantar :1994</div></div>
+                </div>
+            </div>
+            <div class="node-box node-ysf">
+                <h3 style="color:#1abc9c">YSF — System Fusion (Node 1997)</h3>
+                <p>Yaesu proprietary digital radio format. Popular in Japan and growing worldwide. Connected via YSFGateway to the worldwide YSF Reflector network on UDP port 42002. Flat gain meaning no audio adjustment needed.</p>
+                <div class="info">
+                    <div class="info-item"><div class="info-label">Node</div><div class="info-value">1997</div></div>
+                    <div class="info-item"><div class="info-label">USRP RX Port</div><div class="info-value">34003</div></div>
+                    <div class="info-item"><div class="info-label">USRP TX Port</div><div class="info-value">32003</div></div>
+                    <div class="info-item"><div class="info-label">Audio Gain</div><div class="info-value">0.0 dB</div></div>
+                    <div class="info-item"><div class="info-label">Backend</div><div class="info-value">YSFReflector :42002</div></div>
+                </div>
+            </div>
+            <div class="node-box" style="border-left-color:#2980b9">
+                <h3 style="color:#2980b9">EchoLink — Internet Radio (theBridge)</h3>
+                <p>Amateur radio over the internet. Allows licensed operators worldwide to connect via phone or computer. Runs as a conference server via theBridge on port 8443 with TLS encryption.</p>
+                <div class="info">
+                    <div class="info-item"><div class="info-label">Service</div><div class="info-value">theBridge (tbd)</div></div>
+                    <div class="info-item"><div class="info-label">Port</div><div class="info-value">8443 (HTTPS/TLS)</div></div>
+                    <div class="info-item"><div class="info-label">Type</div><div class="info-value">Conference Server</div></div>
+                    <div class="info-item"><div class="info-label">Network</div><div class="info-value">EchoLink Worldwide</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Central Hub — Asterisk/AllStar Node 573470</h2>
+            <div class="detail-box">
+                <strong>What it is:</strong> A specialized version of Asterisk modified for amateur radio called AllStar.
+                It acts as the central switching matrix routing audio between all four digital modes via IAX2 protocol.
+                When someone transmits on any mode, Asterisk receives the audio, determines routing, and sends it to all connected networks simultaneously.
+            </div>
+            <div class="code-block">[573470](node-main)
+statpost_url = http://stats.allstarlink.org/uhandler
+idrecording = |iKF7KGN
+duplex = 2
+rxchannel = Local/pseudo
+startup_macro = *1999
+eclink = yes
+
+[1999](node-main)
+rxchannel = USRP/127.0.0.1:34001:32001
+rxgain = -3.0
+duplex = 0
+startup_macro = *3573470
+
+[1998](node-main)
+rxchannel = USRP/127.0.0.1:34002:32002
+rxgain = -6.0
+duplex = 0
+startup_macro = *3573470
+
+[1997](node-main)
+rxchannel = USRP/127.0.0.1:34003:32003
+rxgain = 0.0
+txgain = 0.0
+duplex = 0
+startup_macro = *3573470</div>
+        </div>
+
+        <div class="section">
+            <h2>Complete Audio Flow — End to End</h2>
+            <div class="flow-diagram">
+STEP 1 — TRANSMISSION
+   DMR Radio transmits
+   → USRP Receiver listens on port 34001
+   → Audio enters Asterisk Node 1999
+
+STEP 2 — ROUTING
+   Asterisk Node 1999
+   → IAX2 connects to Node 573470 (hub)
+   → Hub routes to all connected bridges
+
+STEP 3 — TRANSCODING
+   Analog_Bridge receives PCM audio
+   → AMBE Encoder compresses audio (port 31103)
+   → Compressed AMBE frames sent to HBlink3
+
+STEP 4 — NETWORK DISTRIBUTION
+   HBlink3 Master (port 62030)
+   ├── DMR Peer 1 (remote — IP redacted)
+   ├── DMR Peer 2 (remote — IP redacted)
+   ├── DMR Peer 3 (remote — IP redacted)
+   └── 20+ more peers nationwide
+
+   MMDVM_Bridge simultaneously
+   ├── P25Gateway → Quantar (port 1994)
+   └── YSFGateway → YSF Reflectors (port 42002)
+
+   theBridge simultaneously
+   └── EchoLink Conference (port 8443)
+
+STEP 5 — RETURN AUDIO
+   Remote transmission arrives at HBlink3
+   → HBlink3 → Asterisk (IAX2)
+   → Asterisk → Analog_Bridge
+   → AMBE Decoder (port 31100) → PCM Audio
+   → USRP TX (port 32001)
+   → Local speaker / transmitter
+
+RESULT
+   Everyone on DMR, P25, YSF, and EchoLink
+   all hear the same transmission simultaneously
+   regardless of what radio or protocol they use</div>
+        </div>
+
+        <div class="section">
+            <h2>All Running Services</h2>
+            <table class="connection-table">
+                <thead>
+                    <tr><th>Service</th><th>What It Does</th><th>Port</th><th>RAM</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Asterisk/AllStar</strong></td><td>Central IAX2 routing hub — 75 active channels</td><td><span class="port-tag">5038</span><span class="port-tag">4569</span></td><td>~150MB</td></tr>
+                    <tr><td><strong>HBlink3</strong></td><td>DMR Master Server — Python — connects to 20+ DMR peers</td><td><span class="port-tag">62030</span><span class="port-tag">4322</span></td><td>284MB</td></tr>
+                    <tr><td><strong>MMDVM_Bridge</strong></td><td>Multi-mode voice transcoding — DMR/P25/NXDN</td><td>internal</td><td>89MB</td></tr>
+                    <tr><td><strong>Analog_Bridge (DMR)</strong></td><td>FM analog to DMR digital transcoding</td><td><span class="port-tag">31100</span><span class="port-tag">31103</span></td><td>8MB</td></tr>
+                    <tr><td><strong>Analog_Bridge (P25)</strong></td><td>FM analog to P25 digital transcoding</td><td>internal</td><td>6MB</td></tr>
+                    <tr><td><strong>Analog_Bridge (YSF)</strong></td><td>FM analog to YSF digital transcoding</td><td>internal</td><td>6MB</td></tr>
+                    <tr><td><strong>P25Gateway</strong></td><td>P25 digital mode network gateway</td><td><span class="port-tag">1994</span></td><td>55MB</td></tr>
+                    <tr><td><strong>Quantar_Bridge</strong></td><td>Motorola Quantar P25 radio interface</td><td><span class="port-tag">1994</span></td><td>1MB</td></tr>
+                    <tr><td><strong>YSFGateway</strong></td><td>System Fusion network gateway</td><td><span class="port-tag">42002</span></td><td>6MB</td></tr>
+                    <tr><td><strong>YSFReflector</strong></td><td>YSF reflector server</td><td><span class="port-tag">42002</span></td><td>2MB</td></tr>
+                    <tr><td><strong>theBridge (tbd)</strong></td><td>EchoLink conference server</td><td><span class="port-tag">8443</span></td><td>~10MB</td></tr>
+                    <tr><td><strong>Analog_Reflector</strong></td><td>Audio distribution hub</td><td><span class="port-tag">8443</span></td><td>58MB</td></tr>
+                    <tr><td><strong>Allmon3</strong></td><td>AllStar web monitor dashboard</td><td><span class="port-tag">16080</span></td><td>~5MB</td></tr>
+                    <tr><td><strong>HBmonitor</strong></td><td>DMR activity dashboard</td><td>web</td><td>~5MB</td></tr>
+                    <tr><td><strong>uhdarc-api</strong></td><td>Custom Node.js/Express dashboard — Firebase backend</td><td><span class="port-tag">3000</span></td><td>~30MB</td></tr>
+                    <tr><td><strong>Apache2</strong></td><td>HTTPS frontend — 11 worker processes</td><td><span class="port-tag">80</span><span class="port-tag">443</span></td><td>~20MB</td></tr>
+                    <tr><td><strong>PostgreSQL x2</strong></td><td>Asterisk DB + monitoring DB</td><td><span class="port-tag">5432</span><span class="port-tag">5433</span></td><td>~50MB</td></tr>
+                    <tr><td><strong>MariaDB</strong></td><td>Local database</td><td><span class="port-tag">3306</span></td><td>~30MB</td></tr>
+                    <tr><td><strong>MediaMTX</strong></td><td>RTMP/HLS stream relay for web/mobile</td><td><span class="port-tag">8554</span><span class="port-tag">1935</span></td><td>~10MB</td></tr>
+                    <tr><td><strong>Mosquitto MQTT</strong></td><td>IoT message broker — localhost only</td><td><span class="port-tag">1883</span></td><td>~2MB</td></tr>
+                    <tr><td><strong>Tailscale VPN</strong></td><td>Secure remote access tunnel</td><td>internal</td><td>~20MB</td></tr>
+                    <tr><td><strong>Monit</strong></td><td>System health monitoring and alerting</td><td><span class="port-tag">2812</span></td><td>~2MB</td></tr>
+                    <tr><td><strong>Promtail</strong></td><td>Log aggregation agent</td><td><span class="port-tag">9095</span></td><td>~10MB</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Remote IAX2 Peer Connections</h2>
+            <div class="detail-box">
+                Multiple AllStar nodes from operators around the USA maintain persistent IAX2 connections to Node 573470.
+                When any remote node receives a transmission it flows through to all connected modes on UHDARC and vice versa.
+                Remote peer IPs are not published for security reasons.
+            </div>
+            <table class="connection-table">
+                <thead>
+                    <tr><th>Connection Type</th><th>Protocol</th><th>Count</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>AllStar Remote Nodes (East/West/Central)</td><td>IAX2 / radio-secure</td><td>4 active</td><td>Connected</td></tr>
+                    <tr><td>USRP Local Nodes (1999/1998/1997)</td><td>USRP/IAX2 via 127.0.0.1</td><td>3</td><td>Active</td></tr>
+                    <tr><td>HBlink3 DMR Peers</td><td>HomeBrew DMR Protocol</td><td>20+</td><td>Connected</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Architecture Notes</h2>
+            <div class="warning">
+                <strong>Single Point of Failure:</strong> All 9 services, all 4 digital modes, and all 75 channels run on one server.
+                If the server goes down the entire UHDARC bridge stops. Recommended improvement: geographic redundancy with a
+                backup server and automatic failover.
+            </div>
+            <div class="success">
+                <strong>What is working well:</strong>
+                <ul style="margin-left:20px; margin-top:10px; line-height:2">
+                    <li>Asterisk stable — 2+ day runs without restart</li>
+                    <li>All 4 digital modes bridging successfully in production</li>
+                    <li>20+ remote IAX2 peers staying connected</li>
+                    <li>Audio quality tuned with proper gain and AGC settings per node</li>
+                    <li>Full monitoring stack — Allmon3, HBmonitor, custom API dashboard</li>
+                    <li>Security — TLS on Apache, reCAPTCHA, Tailscale VPN, UFW firewall</li>
+                    <li>Automated backups, daily service reloads, systemd timers</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <h2>Utah High Desert Amateur Radio Club</h2>
+        <p>Built by Nathan Hayes — KF7KGN</p>
+        <p>AllStar Node 573470 | Debian Linux Server</p>
+        <p style="margin-top:10px; font-size:0.9em">GNU General Public License v3.0</p>
+    </div>
+</div>
+</body>
+</html>
