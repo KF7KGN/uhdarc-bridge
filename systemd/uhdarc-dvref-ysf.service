@@ -1,0 +1,32 @@
+[Unit]
+Description=UHDARC DVRef YSF cache refresh
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/var/www/html/UHDARC/scripts
+ExecStart=/usr/bin/php /var/www/html/UHDARC/scripts/fetch_dvref_ysf.php
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=6
+# Systemd hardening — restricts what this oneshot PHP process can touch
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/html/UHDARC/data
+ReadOnlyPaths=/var/www/html/UHDARC/scripts
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+# Allow DNS and outbound HTTPS only
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target

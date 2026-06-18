@@ -1,0 +1,9 @@
+[Unit]
+Description=UHDARC Database Backup
+After=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup-uhdarc-db.sh
+StandardOutput=journal
+StandardError=journal

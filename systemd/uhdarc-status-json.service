@@ -1,0 +1,7 @@
+[Unit]
+Description=UHDARC Status JSON generator
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c '/usr/local/bin/uhdarc_status_json.sh | jq . > /var/www/html/UHDARC/api/status.json.tmp && mv /var/www/html/UHDARC/api/status.json.tmp /var/www/html/UHDARC/api/status.json'
