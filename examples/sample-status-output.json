@@ -1,0 +1,35 @@
+{
+  "generated_utc": "2026-06-18T08:37:30Z",
+  "host": "uhdarc-web",
+  "overall": "ok",
+  "health": {
+    "uptime_seconds": 202753,
+    "loadavg": "0.17 0.15 0.10",
+    "memory": {
+      "total": 4105371648,
+      "used": 1962414080,
+      "free": 175091712
+    },
+    "disk_root": {
+      "total": 83830480896,
+      "used": 29106270208,
+      "free": 53853814784
+    }
+  },
+  "services": [
+    {"name": "ysfgateway",       "active": "active", "enabled": "enabled"},
+    {"name": "ysfparrot",        "active": "active", "enabled": "enabled"},
+    {"name": "YSFReflector",     "active": "active", "enabled": "enabled"},
+    {"name": "mmdvm_bridge",     "active": "active", "enabled": "enabled"},
+    {"name": "p25gateway",       "active": "active", "enabled": "enabled"},
+    {"name": "p25parrot",        "active": "active", "enabled": "enabled"},
+    {"name": "p25reflector",     "active": "active", "enabled": "enabled"},
+    {"name": "nxdngateway",      "active": "active", "enabled": "enabled"},
+    {"name": "nxdnparrot",       "active": "active", "enabled": "enabled"},
+    {"name": "analog_bridge",    "active": "active", "enabled": "enabled"},
+    {"name": "analog_bridge_ysf","active": "active", "enabled": "enabled"},
+    {"name": "analog_bridge_p25","active": "active", "enabled": "enabled"},
+    {"name": "analog_reflector", "active": "active", "enabled": "enabled"},
+    {"name": "asterisk",         "active": "active", "enabled": "enabled"}
+  ]
+}
